@@ -1,121 +1,80 @@
-# Youtube Music Desktop - Projeto de Aprendizagem em Python
+# YouTube Music Desktop Wrapper
 
-Este é um projeto de aprendizagem em Python que tem como objetivo criar uma aplicação desktop inspirada no Youtube Music. A aplicação permite:
+Um simples aplicativo desktop multiplataforma que encapsula o site oficial do YouTube Music usando Python e PyWebView.
 
-- Pesquisa de músicas no YouTube utilizando `yt-dlp`
-- Reprodução de áudio com o `QMediaPlayer` do PyQt5
-- Interface gráfica aprimorada, inspirada no layout do Youtube Music, com painel lateral, barra de busca, lista de resultados e controles de reprodução
-- Integração de login com a conta do Youtube Music (através de um navegador embutido com `QWebEngineView`)
-- Execução de buscas em segundo plano usando threads (QThread) para evitar travamentos na interface
+## Descrição
 
-> **Observação:**  
-> A funcionalidade de envio de "scrobble" para o Last.fm foi removida temporariamente da aplicação (comentada ou removida do `main.py`) devido ao erro:  
-> `AttributeError: module 'lastfm' has no attribute 'scrobble_track'`  
-> Em versões futuras, a integração com o Last.fm será implementada novamente, juntamente com a autenticação completa e extração aprimorada de metadados.
+Este projeto fornece uma janela dedicada para acessar o YouTube Music, oferecendo uma experiência mais integrada ao desktop. Ele utiliza `pywebview` para exibir o conteúdo web e injeta JavaScript para extrair informações da música atualmente em reprodução, exibindo-as no título da janela.
 
-## Funcionalidades Planejadas (Futuro Aprimoramento)
+*Nota: Este projeto começou como uma tentativa de usar a API não oficial `ytmusicapi`, mas devido a desafios com autenticação, pivotou para a abordagem de web wrapper, que se mostrou mais estável e funcional para os objetivos atuais.*
 
-- **Autenticação completa no Last.fm:**  
-  Implementar o fluxo de autenticação para que cada usuário obtenha e armazene seu `SESSION_KEY` e possa enviar seus próprios scrobbles.
-- **Interface Aprimorada:**  
-  Utilizar recursos avançados do PyQt5 (ícones, temas customizados, layouts responsivos, etc.) para refinar a experiência do usuário.
-- **Extração Aprimorada de Metadados:**  
-  Integrar APIs adicionais, como a API do YouTube Data, para obter de forma mais confiável o nome do artista, título da música, álbum, etc.
-- **Tratamento de Erros e Feedback para o Usuário:**  
-  Adicionar mensagens de erro, indicadores de carregamento (loading spinners) e logs para melhorar a usabilidade e facilitar a depuração.
-- **Empacotamento da Aplicação:**  
-  Utilizar ferramentas como PyInstaller para empacotar o aplicativo em um executável desktop.
+## Funcionalidades Atuais
 
-## Estrutura do Projeto
+* Exibe o site oficial do YouTube Music em uma janela desktop.
+* Detecta a música atual (título, artista, capa) e atualiza o título da janela.
+* Login é feito diretamente na página web segura do Google/YouTube.
 
+## Funcionalidades Planejadas
+
+* Controle da reprodução via teclas de mídia do teclado.
+* Ícone do aplicativo personalizado.
+* Opção de rodar em segundo plano com ícone na bandeja do sistema (System Tray).
+* Salvar e restaurar tamanho/posição da janela.
+* (Talvez) Integração com Discord Rich Presence.
+
+## Requisitos
+
+* Python 3.x
+* Bibliotecas Python: `pywebview` (e suas dependências como `pythonnet` no Windows, `pyobjc` no macOS). Veja `requirements.txt`.
+* Dependências do `pywebview` específicas do SO (geralmente instaladas automaticamente ou já presentes):
+    * Windows: Edge WebView2 Runtime (geralmente incluído em W10/W11).
+    * macOS: Safari/WebKit (já incluído).
+    * Linux: `libwebkit2gtk-4.0` ou superior (instalar via gerenciador de pacotes, ex: `sudo apt install libwebkit2gtk-4.0-37`).
+
+## Instalação e Configuração
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone [URL_DO_SEU_REPOSITORIO_GITHUB]
+    cd [NOME_DA_PASTA_DO_PROJETO]
+    ```
+2.  **Crie um ambiente virtual:**
+    ```bash
+    python -m venv venv
+    ```
+3.  **Ative o ambiente virtual:**
+    * Windows: `.\venv\Scripts\activate`
+    * Linux/macOS: `source venv/bin/activate`
+4.  **Instale as dependências:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *(Veja a próxima seção sobre como criar o `requirements.txt`)*
+
+## Como Criar `requirements.txt`
+
+Com o ambiente virtual ativado, gere o arquivo de dependências:
 ```bash
-youtube_music_desktop/
-│
-├── env/                   # Ambiente virtual (criado pelo Python)
-├── src/                   # Código-fonte do projeto
-│   ├── main.py            # Arquivo principal, onde a aplicação será iniciada
-│   ├── ui_main.py         # Código referente à interface gráfica (UI) com PyQt5
-│   ├── youtube_helper.py  # Módulo para busca e extração do áudio do YouTube
-│   └── lastfm.py          # Módulo para integração com a API do Last.fm
-│
-├── assets/                # Recursos como ícones e imagens
-│   └── icons/
-│
-└── README.md              # Documentação do projeto
+pip freeze > requirements.txt
 ```
 
-## Instalação
+Verifique o arquivo gerado e remova linhas que não sejam dependências diretas do projeto (como pkg-resources ou o próprio pyinstaller se estiver instalado no venv).
 
-1. **Clone o Repositório:**
-
-   ```bash
-   git clone https://github.com/seu-usuario/youtube_music_desktop.git
-   cd youtube_music_desktop
-
-   ```
-
-2. **Crie e Ative o Ambiente Virtual:**
-
-python -m venv env
-
-- No Windows:
+## Como Executar
+Com o ambiente virtual ativado e as dependências instaladas:
 
 ```bash
-python -m venv env
+python ytmusic_wrapper.py
+
 ```
 
-- No Linux/macOS:
-
-```bash
-source env/bin/activate
-```
-
-3. **Instale as Dependências:**
-
-As dependências utilizadas são:
-
-- PyQt5
-
-- PyQtWebEngine
-
-- yt-dlp
-
-- requests
-
-Caso haja um arquivo `requirements.txt` (recomendado), instale com:
-
-```bash
-pip install -r requirements.txt
-```
-
-Caso não exista, instale manualmente:
-
-```bash
-pip install PyQt5 PyQtWebEngine yt-dlp requests
-```
-
-4. **Executando a Aplicação:**
-
-Navegue até a pasta `src` e execute o arquivo principal:
-
-```bash
-cd src
-python main.py
-```
-
-## Observações
-
-- FFmpeg:
-  Durante a execução, o `yt-dlp` pode emitir avisos sobre a ausência do `ffmpeg`. Recomenda-se instalar o `ffmpeg` e adicioná-lo ao PATH para garantir a melhor qualidade de extração de áudio.
-  Mais informações: ffmpeg.org
-
-- Integração com Last.fm:
-  A funcionalidade de scrobble foi removida temporariamente devido a um problema de atributo. Futuras versões do projeto irão integrar essa funcionalidade com autenticação e captura de metadados aprimorada.
-
-## Contribuição
-
-Este projeto é um aprendizado em desenvolvimento de aplicações desktop com Python e PyQt5. Sinta-se à vontade para abrir issues ou enviar pull requests com melhorias e correções.
+## Como Funciona (Resumo Técnico)
+- pywebview é usado para criar a janela principal e carregar a URL do YouTube Music.
+- Uma thread separada executa periodicamente.
+- Nessa thread, window.evaluate_js() injeta código JavaScript na página web.
+- O JavaScript usa document.querySelector() com seletores CSS específicos para encontrar os elementos HTML do título, artista e capa na barra de player do YouTube Music.
+- Os dados extraídos são retornados ao Python como uma string JSON.
+- O Python interpreta o JSON e atualiza o título da janela (window.set_title()).
 
 ## Licença
-
-Este projeto está licenciado sob a MIT License.
+Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE.md para detalhes.
